@@ -11,6 +11,6 @@ import javax.persistence.Embeddable;
 @NoArgsConstructor
 @Embeddable
 public class Score {
-    private Long playerOneScore;
-    private Long playerTwoScore;
+    private Integer playerOneScore;
+    private Integer playerTwoScore;
 }

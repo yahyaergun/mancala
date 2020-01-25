@@ -1,6 +1,6 @@
 package com.yergun.bol.mancala.model;
 
-public enum CupType {
-    PIT,
+public enum PitType {
+    STANDARD,
     MANCALA
 }

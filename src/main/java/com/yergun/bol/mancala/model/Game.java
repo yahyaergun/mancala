@@ -16,14 +16,12 @@ public class Game {
     @GeneratedValue
     private Long id;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Board board;
     private Turn turn = Turn.PLAYER_ONE;
 
-    @Embedded
-    private Player player1;
-    @Embedded
-    private Player player2;
+    private String player1;
+    private String player2;
     @Embedded
     private Score score;
 
@@ -32,6 +30,6 @@ public class Game {
     }
 
     public void updateScore() {
-        //get score from players mancala
+        //get score from each players' mancala cup
     }
 }
