@@ -27,4 +27,18 @@ public class Pit {
     private Integer marbleCount;
     @Enumerated(EnumType.STRING)
     private PitType pitType;
+
+    public void incrementMarbles() {
+        marbleCount++;
+    }
+
+    public void addMarbles(int count) {
+        marbleCount += count;
+    }
+
+    public int collectMarbles() {
+        int grabbedMarbles = marbleCount;
+        marbleCount = 0;
+        return grabbedMarbles;
+    }
 }

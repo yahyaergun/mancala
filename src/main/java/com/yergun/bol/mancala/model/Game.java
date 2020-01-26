@@ -1,6 +1,7 @@
 package com.yergun.bol.mancala.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,6 +10,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Builder
 @Entity
 public class Game {
 
@@ -18,12 +20,13 @@ public class Game {
 
     @OneToOne(cascade = CascadeType.ALL)
     private Board board;
-    private Turn turn = Turn.PLAYER_ONE;
+    private Turn turn;
 
     private String player1;
     private String player2;
     @Embedded
     private Score score;
+    private GameState state;
 
     public void toggleTurn() {
         turn = (turn == Turn.PLAYER_ONE ? Turn.PLAYER_TWO : Turn.PLAYER_ONE);
