@@ -6,10 +6,17 @@ import com.yergun.bol.mancala.model.Player;
 import com.yergun.bol.mancala.service.GameService;
 import com.yergun.bol.mancala.util.Constants;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +29,7 @@ import java.util.Optional;
 public class GameController {
 
     private final GameService gameService;
+    private final SimpMessagingTemplate messagingTemplate;
 
     @GetMapping
     public List<Game> gameList() {
@@ -44,7 +52,9 @@ public class GameController {
 
     @PostMapping("/{id}/move")
     public Game makeMove(@PathVariable Long id, @RequestBody MoveRequest moveRequest) {
-        return gameService.makeAMove(id, moveRequest);
+        Game game = gameService.makeAMove(id, moveRequest);
+        messagingTemplate.convertAndSend(Constants.UPDATE_GAME_WS_TOPIC, game);
+        return game;
     }
 
     private Optional<Player> getPlayerFromSession(HttpSession session) {
