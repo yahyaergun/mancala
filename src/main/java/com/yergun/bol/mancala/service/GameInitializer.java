@@ -11,10 +11,8 @@ public class GameInitializer {
 
     public static Game initializeGame() {
         return Game.builder()
-                .state(GameState.IN_PROGRESS)
+                .state(GameState.WAITING_FOR_PLAYERS)
                 .board(initializeBoard())
-                .player1("Player1")
-                .player2("Player2")
                 .turn(Turn.PLAYER_ONE)
                 .score(new Score(0, 0))
                 .build();

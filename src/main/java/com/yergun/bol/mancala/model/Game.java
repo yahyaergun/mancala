@@ -22,8 +22,12 @@ public class Game {
     private Board board;
     private Turn turn;
 
-    private String player1;
-    private String player2;
+    @OneToOne
+    private Player player1;
+
+    @OneToOne
+    private Player player2;
+
     @Embedded
     private Score score;
     private GameState state;

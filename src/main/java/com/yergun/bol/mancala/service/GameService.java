@@ -8,6 +8,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -18,8 +19,21 @@ public class GameService {
 
     private final GameRepository gameRepository;
 
-    public Game createGame() {
+    public List<Game> getGameList() {
+        return gameRepository.findAll();
+    }
+
+    public Game createGame(Player player) {
         Game game = GameInitializer.initializeGame();
+        game.setPlayer1(player);
+        gameRepository.save(game);
+        return game;
+    }
+
+    public Game joinGame(Long id, Player player) {
+        Game game = gameRepository.findById(id).orElseThrow(() -> new RuntimeException("No game by id:[" + id + "]"));
+        game.setPlayer2(player);
+        game.setState(GameState.IN_PROGRESS);
         gameRepository.save(game);
         return game;
     }
@@ -28,6 +42,7 @@ public class GameService {
         Game game = gameRepository.findById(id).orElseThrow(() -> new RuntimeException("No game by id:[" + id + "]"));
         return this.doMakeAMove(game, moveRequest.getPosition());
     }
+
 
     private Game doMakeAMove(Game game, Integer position) {
         List<Pit> pits = game.getBoard().getPits();
@@ -51,10 +66,12 @@ public class GameService {
         }
 
         if (isPlayersPit(turn, currentPit) && isPitEmpty(currentPit)) {
+            log.info("Last marble landed in player's own empty pit, collecting marbles from it and the opposite pit and adding it to player's mancala!");
             collectPitsToMancala(game, currentPit);
         }
 
         if (!isPlayersMancalaPit(turn, currentPit)) {
+            log.info("Toggling turn to other player.");
             game.toggleTurn();
         }
 

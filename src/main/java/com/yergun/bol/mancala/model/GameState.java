@@ -1,7 +1,7 @@
 package com.yergun.bol.mancala.model;
 
 public enum GameState {
-    CREATED,
+    WAITING_FOR_PLAYERS,
     IN_PROGRESS,
     ENDED
 }
