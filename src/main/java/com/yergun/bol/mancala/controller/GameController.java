@@ -40,13 +40,16 @@ public class GameController {
     public Game createGame(HttpSession session) {
         Player player = getPlayerFromSession(session)
                 .orElseThrow(() -> new RuntimeException("You have to login to create a game!"));
-        return gameService.createGame(player);
+        Game game = gameService.createGame(player);
+        messagingTemplate.convertAndSend(Constants.UPDATE_GAMELIST_WS_TOPIC, gameService.getGameList());
+        return game;
     }
 
     @PostMapping("/{id}/join")
     public Game joinGame(@PathVariable Long id, HttpSession session) {
         Player player = getPlayerFromSession(session)
                 .orElseThrow(() -> new RuntimeException("You have to login to join a game!"));
+        messagingTemplate.convertAndSend(Constants.UPDATE_GAMELIST_WS_TOPIC, gameService.getGameList());
         return gameService.joinGame(id, player);
     }
 

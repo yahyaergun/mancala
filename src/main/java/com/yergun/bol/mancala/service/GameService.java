@@ -7,10 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.stream.IntStream;
 
 @RequiredArgsConstructor
 @Log4j2
@@ -20,7 +17,7 @@ public class GameService {
     private final GameRepository gameRepository;
 
     public List<Game> getGameList() {
-        return gameRepository.findAll();
+        return gameRepository.findAllByStateIsIn(List.of(GameState.WAITING_FOR_PLAYERS, GameState.IN_PROGRESS));
     }
 
     public Game createGame(Player player) {
@@ -43,7 +40,6 @@ public class GameService {
         return this.doMakeAMove(game, moveRequest.getPosition());
     }
 
-
     private Game doMakeAMove(Game game, Integer position) {
         List<Pit> pits = game.getBoard().getPits();
         Pit currentPit = pits.get(position);
@@ -65,7 +61,7 @@ public class GameService {
             currentPit = pit;
         }
 
-        if (isPlayersPit(turn, currentPit) && isPitEmpty(currentPit)) {
+        if (isPlayersPit(turn, currentPit) && hasOneMarble(currentPit)) {
             log.info("Last marble landed in player's own empty pit, collecting marbles from it and the opposite pit and adding it to player's mancala!");
             collectPitsToMancala(game, currentPit);
         }
@@ -75,22 +71,11 @@ public class GameService {
             game.toggleTurn();
         }
 
-        updateScore(game);
-        updateGameState(game);
+        game.updateScore();
+        game.updateGameState();
 
         gameRepository.save(game);
         return game;
-    }
-
-    private void updateGameState(Game game) {
-        if (game.getBoard().isAPlayersPitsEmpty()) {
-            game.setState(GameState.ENDED);
-        }
-    }
-
-    private void updateScore(Game game) {
-        game.getScore().setPlayerOneScore(game.getBoard().getPlayerOneMancala().getMarbleCount());
-        game.getScore().setPlayerTwoScore(game.getBoard().getPlayerTwoMancala().getMarbleCount());
     }
 
     private void collectPitsToMancala(Game game, Pit currentPit) {
@@ -109,8 +94,8 @@ public class GameService {
 
     }
 
-    private boolean isPitEmpty(Pit pit) {
-        return pit.getMarbleCount() == 0;
+    private boolean hasOneMarble(Pit pit) {
+        return pit.getMarbleCount() == 1;
     }
 
     private boolean isPlayersPit(Turn turn, Pit pit) {

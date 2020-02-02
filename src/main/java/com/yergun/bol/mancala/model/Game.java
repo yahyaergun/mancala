@@ -37,6 +37,13 @@ public class Game {
     }
 
     public void updateScore() {
-        //get score from each players' mancala cup
+        this.score.setPlayerOneScore(this.board.getPlayerOneMancala().getMarbleCount());
+        this.score.setPlayerTwoScore(this.board.getPlayerTwoMancala().getMarbleCount());
+    }
+
+    public void updateGameState() {
+        if (this.board.isAPlayersPitsEmpty()) {
+            this.setState(GameState.ENDED);
+        }
     }
 }
