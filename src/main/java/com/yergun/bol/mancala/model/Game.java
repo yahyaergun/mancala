@@ -43,6 +43,7 @@ public class Game {
 
     public void updateGameState() {
         if (this.board.isAPlayersPitsEmpty()) {
+            this.board.copyRemainingMarblesToMancalaPits();
             this.setState(GameState.ENDED);
         }
     }

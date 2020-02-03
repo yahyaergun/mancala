@@ -1,4 +1,4 @@
-package com.yergun.bol.mancala.service;
+package com.yergun.bol.mancala.initializer;
 
 import com.yergun.bol.mancala.model.*;
 import org.springframework.stereotype.Component;

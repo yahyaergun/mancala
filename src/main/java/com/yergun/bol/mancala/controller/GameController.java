@@ -1,5 +1,6 @@
 package com.yergun.bol.mancala.controller;
 
+import com.yergun.bol.mancala.exception.PlayerNotLoggedInException;
 import com.yergun.bol.mancala.model.Game;
 import com.yergun.bol.mancala.model.MoveRequest;
 import com.yergun.bol.mancala.model.Player;
@@ -39,7 +40,7 @@ public class GameController {
     @PostMapping
     public Game createGame(HttpSession session) {
         Player player = getPlayerFromSession(session)
-                .orElseThrow(() -> new RuntimeException("You have to login to create a game!"));
+                .orElseThrow(() -> new PlayerNotLoggedInException("You have to login to create a game!"));
         Game game = gameService.createGame(player);
         messagingTemplate.convertAndSend(Constants.UPDATE_GAMELIST_WS_TOPIC, gameService.getGameList());
         return game;
@@ -48,9 +49,11 @@ public class GameController {
     @PostMapping("/{id}/join")
     public Game joinGame(@PathVariable Long id, HttpSession session) {
         Player player = getPlayerFromSession(session)
-                .orElseThrow(() -> new RuntimeException("You have to login to join a game!"));
+                .orElseThrow(() -> new PlayerNotLoggedInException("You have to login to join a game!"));
+        Game game = gameService.joinGame(id, player);
         messagingTemplate.convertAndSend(Constants.UPDATE_GAMELIST_WS_TOPIC, gameService.getGameList());
-        return gameService.joinGame(id, player);
+        messagingTemplate.convertAndSend(Constants.UPDATE_GAME_WS_TOPIC, game);
+        return game;
     }
 
     @PostMapping("/{id}/move")

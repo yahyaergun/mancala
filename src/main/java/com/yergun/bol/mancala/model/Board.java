@@ -46,6 +46,14 @@ public class Board {
         return isPlayerOnePitsEmpty() || isPlayerTwoPitsEmpty();
     }
 
+    public void copyRemainingMarblesToMancalaPits() {
+        Pit playerOneMancala = getPlayerOneMancala();
+        getPlayerOneStandardPits().forEach(p -> playerOneMancala.addMarbles(p.collectMarbles()));
+
+        Pit playerTwoMancala = getPlayerTwoMancala();
+        getPlayerTwoStandardPits().forEach(p -> playerTwoMancala.addMarbles(p.collectMarbles()));
+    }
+
     private boolean isPlayerOnePitsEmpty() {
         return getPlayerOneStandardPits()
                 .stream()

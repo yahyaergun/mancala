@@ -1,5 +1,7 @@
 package com.yergun.bol.mancala.service;
 
+import com.yergun.bol.mancala.exception.GameNotFoundException;
+import com.yergun.bol.mancala.initializer.GameInitializer;
 import com.yergun.bol.mancala.model.*;
 import com.yergun.bol.mancala.repository.GameRepository;
 import com.yergun.bol.mancala.util.Utilities;
@@ -28,7 +30,7 @@ public class GameService {
     }
 
     public Game joinGame(Long id, Player player) {
-        Game game = gameRepository.findById(id).orElseThrow(() -> new RuntimeException("No game by id:[" + id + "]"));
+        Game game = gameRepository.findById(id).orElseThrow(() -> new GameNotFoundException("No game by id:[" + id + "]"));
         game.setPlayer2(player);
         game.setState(GameState.IN_PROGRESS);
         gameRepository.save(game);
@@ -36,7 +38,7 @@ public class GameService {
     }
 
     public Game makeAMove(Long id, MoveRequest moveRequest) {
-        Game game = gameRepository.findById(id).orElseThrow(() -> new RuntimeException("No game by id:[" + id + "]"));
+        Game game = gameRepository.findById(id).orElseThrow(() -> new GameNotFoundException("No game by id:[" + id + "]"));
         return this.doMakeAMove(game, moveRequest.getPosition());
     }
 
